@@ -2,7 +2,8 @@
 
 
 ## Loading and preprocessing the data
-```{r}
+
+```r
 if(sum(list.files()=="activity.csv") == 0){
   fileURL <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
   activity <- unz(fileURL,fileName="activity.csv",open="r")
@@ -14,7 +15,8 @@ activity$date = as.Date(activity$date, "%Y-%m-%d")
 
 ## What is mean total number of steps taken per day?
 
-```{r}
+
+```r
 steps_per_day <- aggregate(activity$steps, by=list(activity$date), sum)
 names(steps_per_day)[1] <- "date"
 names(steps_per_day)[2] <- "steps"
@@ -23,29 +25,39 @@ median_steps <- median(steps_per_day$steps,na.rm=TRUE)
 hist(steps_per_day$steps)
 ```
 
-The mean total number of steps taken per day is **`r as.integer(mean_steps)`**.  
-The median total number of steps taken per day is **`r median_steps`**.  
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
+
+The mean total number of steps taken per day is **10766**.  
+The median total number of steps taken per day is **10765**.  
 
 ## What is the average daily activity pattern?
-```{r}
+
+```r
 steps_per_interval <- aggregate(activity$steps, by=list(activity$interval), mean, na.rm=TRUE)
 names(steps_per_interval)[1] <- "interval"
 names(steps_per_interval)[2] <- "steps"
 plot(steps_per_interval$interval,steps_per_interval$steps,type="l")
+```
+
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
+
+```r
 max_interval <- steps_per_interval$interval[which.max(steps_per_interval$steps)]
 ```
 
-The five minute interval that contains the highest number of stps is interval **`r max_interval`**.  
+The five minute interval that contains the highest number of stps is interval **835**.  
 
 ## Imputing missing values
-```{r}
+
+```r
 na_data <- apply(is.na(activity),1,sum)
 na_rows <- length(na_data) - length(na_data[na_data==0])
 ```
 
-The total number of missing values in the dataset are **`r na_rows`**.  
+The total number of missing values in the dataset are **2304**.  
 
-```{r}
+
+```r
 activity$steps_nona = activity$steps
 for (i in 1:length(activity$steps)){
   if (is.na(activity$steps[i])) {
@@ -61,18 +73,22 @@ median_steps_nona <- median(steps_per_day_nona$steps)
 hist(steps_per_day_nona$steps)
 ```
 
-The mean total number of steps taken per day is **`r as.integer(mean_steps_nona)`**.  
-The median total number of steps taken per day is **`r as.integer(median_steps_nona)`**.  
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+
+The mean total number of steps taken per day is **10766**.  
+The median total number of steps taken per day is **10766**.  
 There is little difference between the calculation with filled-in missing values and the calculation ignoring missing values.
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r}
+
+```r
 activity$day <- weekdays(activity$date)
 weekdays_list <- c("Monday","Tuesday","Wednesday","Thursday","Friday")
 activity$daytype <- lapply(activity$day, function(x) ifelse((x == "Saturday" || x == "Sunday"),x<-"Weekend",x<-"Weekday"))
 ```
 
-```{r}
+
+```r
 steps_per_interval_daytype.wd <- aggregate(steps ~ interval, data = activity, subset = activity$daytype == 
         "Weekday", FUN = mean)
 steps_per_interval_daytype.we <- aggregate(steps ~ interval, data = activity, subset = activity$daytype == 
@@ -80,8 +96,7 @@ steps_per_interval_daytype.we <- aggregate(steps ~ interval, data = activity, su
 par(mfrow=c(2,1))
 plot(steps_per_interval_daytype.wd$interval,steps_per_interval_daytype.wd$steps,type="l")
 plot(steps_per_interval_daytype.we$interval,steps_per_interval_daytype.we$steps,type="l")
-
-
-
 ```
+
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
 
