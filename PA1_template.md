@@ -100,3 +100,4 @@ plot(steps_per_interval_daytype.we$interval,steps_per_interval_daytype.we$steps,
 
 ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
 
+The main difference between weekend and weekday activity is that weekday activity begins earlier in the day.
